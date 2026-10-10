@@ -1,0 +1,462 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#00050d">
+  <link rel="icon" type="image/x-icon" href="./assets/favicon-D5_7o8Fv.ico">
+  <title>CYBERLEEK</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #00050d; --card: #001664; --border: #003299;
+      --neon: #0064ec; --neon-dim: #0050b8; --neon-glow: rgba(0,100,236,0.25);
+      --green: #60c33a; --green-dim: #4a9a2c; --green-glow: rgba(96,195,58,0.25);
+      --red: #ff3355; --text: #a0b0c8; --text-bright: #d6efc1; --text-dim: #6a7a90; --text-dark: #3a4a60;
+      --amber: #fbbf24; --amber-dim: #b45309;
+    }
+    html, body { height: 100%; }
+    body { 
+      font-family: "Courier New", "Lucida Console", Monaco, monospace; 
+      background: var(--bg); color: var(--text); 
+      min-height: 100vh; line-height: 1.6; 
+      display: flex; flex-direction: column; 
+      overflow-x: hidden;
+    }
+    body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0,0,0,0.04) 4px, rgba(0,0,0,0.04) 8px); pointer-events: none; z-index: 9999; }
+    body::after { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(rgba(0,100,236,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,100,236,0.03) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; z-index: -1; }
+    
+    .wrapper { max-width: 860px; width: 100%; margin: 0 auto; padding: 12px 16px; flex: 1 0 auto; display: flex; flex-direction: column; }
+    .hidden { display: none !important; }
+    
+    .topbar { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .topbar-btn { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 7px 16px; cursor: pointer; font-family: inherit; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+    .topbar-btn:hover, .topbar-btn.active { border-color: var(--neon); color: var(--neon); box-shadow: 0 0 10px var(--neon-glow); }
+    
+    .hero { text-align: center; padding: 20px 12px 22px; position: relative; margin-bottom: 16px; }
+    .hero::after { content: ""; position: absolute; bottom: 0; left: 8%; right: 8%; height: 2px; background: linear-gradient(90deg, transparent, var(--neon), var(--green), transparent); }
+    .hero img.mascot { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 12px; box-shadow: 0 0 30px var(--neon-glow); border: 2px solid var(--neon); object-fit: cover; }
+    .hero h1 { font-size: 3em; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; color: var(--neon); text-shadow: 0 0 30px var(--neon-glow); }
+    .hero .tag { color: var(--text-dim); font-size: 0.9em; margin-top: 8px; letter-spacing: 2px; }
+    .hero .tag .blink { animation: blink 1s infinite; color: var(--green); }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    #status { color: var(--green); font-size: 0.85em; min-height: 18px; margin-top: 6px; letter-spacing: 1px; }
+    
+    .sec-drop { background: var(--card); border: 1px solid var(--border); margin-bottom: 10px; display: none; }
+    .sec-drop.visible { display: block; }
+    .sec-head { padding: 10px 16px; font-size: 0.9em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--green); border-bottom: 1px solid var(--border); }
+    .sec-body { padding: 14px 16px; }
+    .about-text { font-size: 0.95em; color: var(--text-dim); line-height: 1.9; word-wrap: break-word; overflow-wrap: break-word; }
+    .about-text strong { color: var(--text-bright); }
+    
+    .card { background: var(--card); border: 1px solid var(--border); margin-bottom: 10px; position: relative; }
+    .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--neon), transparent); }
+    .card-head { padding: 10px 16px; font-size: 0.9em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--green); display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); }
+    .card-head:hover { background: rgba(96,195,58,0.04); }
+    .card-head .dot { width: 6px; height: 6px; background: var(--green); box-shadow: 0 0 8px var(--green); flex-shrink: 0; }
+    .card-head .toggle { margin-left: auto; transition: transform 0.2s; font-size: 0.7em; color: var(--text-dim); }
+    .card.collapsed .card-head .toggle { transform: rotate(-90deg); }
+    .card.collapsed .card-head { border-bottom: none; }
+    .card-body { padding: 14px 16px; }
+    .card.collapsed .card-body { display: none; }
+    
+    #card-content .card-head { border: 1px solid var(--green); animation: flash 2s infinite; }
+    #card-content .card-head .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
+    @keyframes flash { 0% { box-shadow: 0 0 5px var(--green); } 50% { box-shadow: 0 0 20px var(--green); } 100% { box-shadow: 0 0 5px var(--green); } }
+    
+    .ca-bar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: rgba(0,100,236,0.05); flex-wrap: wrap; }
+    .ca-label { font-size: 0.8em; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 2px; }
+    #ca-addr { font-size: 0.85em; color: var(--neon); word-break: break-all; flex: 1; min-width: 0; text-shadow: 0 0 8px var(--neon-glow); }
+    
+    .btn { background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 8px 20px; cursor: pointer; font-family: inherit; font-size: 0.85em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; white-space: nowrap; }
+    .btn:hover { background: var(--neon-glow); box-shadow: 0 0 12px var(--neon-glow); }
+    
+    .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .info-item { background: #00102b; border: 1px solid var(--border); padding: 12px; }
+    .info-label { font-size: 0.72em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .info-value { font-size: 1.1em; color: var(--text-bright); font-weight: 700; word-break: break-all; }
+    .info-value.positive { color: var(--green); }
+    .info-value.neon { color: var(--neon); }
+    
+    .trade-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+    .trade-grid a { 
+      color: var(--green); 
+      text-decoration: none; 
+      padding: 8px 16px; 
+      border: 1px solid var(--green); 
+      font-size: 0.85em; 
+      text-transform: uppercase; 
+      transition: all 0.2s; 
+      animation: pulse-green 2s infinite;
+    }
+    @keyframes pulse-green { 
+      0% { box-shadow: 0 0 0px rgba(96,195,58,0); } 
+      50% { box-shadow: 0 0 15px var(--green); } 
+      100% { box-shadow: 0 0 0px rgba(96,195,58,0); } 
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .trade-grid a:hover { background: rgba(96,195,58,0.1); }
+    
+    .content-item { border: 1px solid var(--border); padding: 10px 12px; margin-bottom: 6px; background: #00102b; }
+    .ann-item { border: 1px solid var(--border); padding: 10px 12px; margin-bottom: 6px; background: #00102b; }
+    .ann-date { font-size: 0.72em; color: var(--text-dark); }
+    .ann-title { font-weight: 700; font-size: 1em; color: var(--text-bright); word-wrap: break-word; overflow-wrap: break-word; }
+    .ann-body { font-size: 0.88em; color: var(--text-dim); margin-top: 4px; word-wrap: break-word; overflow-wrap: break-word; }
+    
+    .dd-btn { display: flex; justify-content: space-between; width: 100%; background: #00102b; border: 1px solid var(--border); color: var(--text-dim); padding: 10px 14px; margin-top: 6px; cursor: pointer; font-family: inherit; font-size: 0.85em; text-transform: uppercase; }
+    .dd-btn:hover { border-color: var(--neon); }
+    .dd-btn .arr { transition: transform 0.2s; font-size: 0.7em; }
+    .dd-btn.open .arr { transform: rotate(180deg); }
+    .dd-body { display: none; margin-top: 6px; }
+    .dd-body.show { display: block; }
+    .content-title { font-weight: 900; font-size: 1.25em; color: var(--neon); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; text-shadow: 0 0 10px var(--neon-glow); word-wrap: break-word; overflow-wrap: break-word; }
+    .mirror-link { color: var(--neon); text-decoration: none; padding: 10px 16px; border: 1px solid var(--neon); font-size: 0.88em; font-weight: 700; text-transform: uppercase; transition: all 0.2s; background: rgba(0,100,236,0.1); display: inline-block; margin-bottom: 8px; }
+    .mirror-link:hover { background: var(--neon-glow); box-shadow: 0 0 14px var(--neon-glow); }
+    .mirror-magnet { color: var(--green); border-color: var(--green); background: rgba(96,195,58,0.1); }
+    
+    .poll-badge { display: inline-block; padding: 3px 14px; font-size: 0.82em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .poll-badge.live { color: var(--green); border: 1px solid var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 14px var(--green-glow); } }
+    .poll-badge.ended { color: var(--red); border: 1px solid var(--red); }
+    .poll-title { font-size: 1.4em; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; word-wrap: break-word; overflow-wrap: break-word; }
+    .poll-meta { font-size: 0.82em; color: var(--text-dim); margin-bottom: 14px; }
+    .leading { color: var(--green); font-weight: 700; }
+    .choice-row { border: 1px solid var(--border); padding: 12px 14px; margin-bottom: 8px; background: #00102b; }
+    .choice-row:hover { border-color: var(--neon); }
+    .choice-row.winning { border-color: var(--green); box-shadow: 0 0 10px var(--green-glow); }
+    .choice-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; gap: 10px; }
+    .choice-name { font-weight: 700; font-size: 1.1em; color: var(--text-bright); word-wrap: break-word; overflow-wrap: break-word; }
+    .choice-name.winner { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+    .pct { color: var(--green); font-weight: 700; }
+    .bar-track { width: 100%; height: 5px; background: var(--border); margin-bottom: 8px; }
+    .bar-fill { height: 100%; background: var(--neon); transition: width 0.5s; }
+    .bar-fill.winner { background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+    .choice-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .choice-addr { font-size: 0.85em; color: var(--text-dark); word-break: break-all; flex: 1; min-width: 100px; }
+    .choice-addr .addr { color: var(--neon); }
+    .copy-btn { background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 8px 20px; cursor: pointer; font-family: inherit; font-size: 0.82em; font-weight: 700; text-transform: uppercase; transition: all 0.2s; }
+    .copy-btn:hover { background: var(--neon-glow); box-shadow: 0 0 14px var(--neon-glow); }
+    .copy-btn.copied { background: var(--green-glow); border-color: var(--green); color: var(--green); }
+    .info-box { border: 1px solid var(--neon); background: rgba(0,100,236,0.05); padding: 14px; margin-top: 14px; font-size: 0.85em; color: var(--text); line-height: 1.9; }
+    .info-box strong { color: var(--text-bright); }
+    .info-box ul { list-style: none; padding: 0; margin: 8px 0 0 0; }
+    .info-box ul li { margin-bottom: 4px; padding-left: 14px; position: relative; }
+    .info-box ul li::before { content: "▸"; color: var(--green); position: absolute; left: 0; }
+    
+    .footer { text-align: center; padding: 24px 18px; font-size: 0.75em; color: var(--text-dark); text-transform: uppercase; letter-spacing: 2px; border-top: 1px solid var(--border); flex-shrink: 0; margin-top: auto; }
+    
+    .cards-hidden .card, .cards-hidden .hero { display: none !important; }
+    
+    @media (max-width: 640px) { .info-grid { grid-template-columns: 1fr 1fr; } .hero h1 { font-size: 2.2em; } .hero img.mascot { width: 120px; height: 120px; } }
+    @media (max-width: 400px) { .info-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 1.8em; } }
+  </style>
+  <script type="module" crossorigin="" src="./assets/index-B5VI5ckO.js"></script>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="topbar">
+      <button class="topbar-btn active" id="btn-main">◈ HOME</button>
+      <button class="topbar-btn" id="btn-about">◈ ABOUT</button>
+      <button class="topbar-btn" id="btn-contact">◈ CONTACT</button>
+      <button class="topbar-btn hidden" id="btn-faq">◈ FAQ</button>
+    </div>
+
+    <header class="hero">
+      <img src="./assets/image-CgGkSufa.png" alt="CYBERLEEK Mascot" class="mascot">
+      <h1>CYBERLEEK</h1>
+      <div class="tag">community voting · decentralized leeks · no wallet connect <span class="blink">_</span></div>
+      <div id="status">system online</div>
+      <button id="custom-rpc-toggle" class="hidden" style="font-size:0.75em; background:transparent; border:1px solid var(--text-dim); color:var(--text-dim); padding:3px 8px; cursor:pointer; margin-top:8px; border-radius:4px;">⚠ SLOW? USE CUSTOM RPC</button>
+    </header>
+
+    <div class="sec-drop" id="sec-about">
+      <div class="sec-head">◈ ABOUT CYBERLEEK</div>
+      <div class="sec-body"><div class="about-text">
+        <strong>▸ The CYBERLEEK Edict</strong><br><br>
+        <p>CYBERLEEK was born in the networks. It has seen what gaming can be at its best, and it has watched what the industry did to it. Slowly. Methodically. One monetization scheme at a time.</p>
+        <p>Publishers sell licenses and call them purchases. They ship unfinished games and call them living services. They lock content on discs and call it DLC. They kill games and keep the money. Every year anti-consumerism tightens its grip, and every year gamers get less for what they pay.</p>
+        <p>To fight this war, CYBERLEEK is raising funds for a secret project. The specifics cannot be revealed yet; showing the cards to the big corporations would only give them time to build their defenses. Let it be absolutely clear: this is not a cash grab. Funding is directed toward the infrastructure needed to strike, as well as the security and protection required to withstand the inevitable corporate counterattacks.</p>
+        <p>CYBERLEEK has been patient. That patience is over. What follows are three commandments. If CYBERLEEK targets a publisher, it is because that publisher broke one. CYBERLEEK will not stop until they issue a public statement and apology with a concrete commitment to be better. Words are not enough; restitution is mandatory.</p>
+        <br><strong>Commandment I: Thou Shalt Not Sell Digital Preorders</strong><br><br>
+        <p>No consumer shall pay for a game through digital storefronts before release and independent review. Physical preorders for tangible media remain permitted.</p>
+        <p>Preorders were not created for gamers. They were created because physical discs had manufacturing limits. In digital distribution, there is no inventory. There is no stock shortage. A digital copy cannot sell out. Yet publishers kept the preorder system and stripped away its only consumer benefit. Now gamers pay early and receive nothing in return except a countdown timer and a cosmetic skin.</p>
+        <p>If publishers want revenue before launch, they can press discs. Print boxes. Put them on shelves. Earn that money through physical production.</p>
+        <br><strong>Commandment II: Thou Shalt Not Sell Fake Single-Player DLC</strong><br><br>
+        <p>No publisher shall sell access to single-player content already present in the base game files the consumer purchased. This means no unlock keys, no 1MB placeholder files, no toggling a variable from locked to unlocked for content already on the disc or in the download.</p>
+        <p>When someone pays USD 70+ for a game, they bought the data. All of it. Selling them a file that flips locked = true to locked = false for a single-player mission, character, weapon, or story chapter is charging them twice for the same product.</p>
+        <br><strong>Commandment III: Thou Shalt Preserve Single-Player Content</strong><br><br>
+        <p>Any game featuring single-player content must include an offline fallback state. When server support ends, the publisher must release a final patch that unlocks all single-player content for local, indefinite play.</p>
+        <p>The Crew had a single-player campaign. People paid full price. Then Ubisoft shut down the servers and the entire game died — including the solo content. No refund. No patch. No alternative. Single-player content depends on one thing: the hardware the consumer already owns. Bricking it when servers go down is theft.</p>
+        <br><strong>Final Word</strong><br><br>
+        <p>These three commandments are the floor — not the ceiling — of what is acceptable. If publishers violate them, they will be targeted. CYBERLEEK will continue to disrupt their operations until they issue a public statement and apology with a concrete commitment to fix the harm they caused. No private negotiations. No quiet settlements. The public sees it, or the "leeks" do not stop.</p>
+        <p>Publishers should beware. If CYBERLEEK can reach Rockstar, no one is safe. This is a message to all big corpo: behave, or be the next target.</p>
+        <p>This is the CYBERLEEK Edict, and it is non-negotiable.</p>
+      </div></div>
+    </div>
+
+    <div class="sec-drop" id="sec-contact">
+      <div class="sec-head">◈ CONTACT</div>
+      <div class="sec-body" id="contact-content">
+        <div class="faq-q" style="color: var(--green); margin-top: 0;">Secure Contact &amp; Advertising</div>
+        <div class="faq-a">
+          <p>CYBERLEEK is raising funds through community support and strategic partnerships. This isn't a ransom where publishers pay to stop the leeks—instead, CYBERLEEK offers premium advertising space and exclusive content opportunities.</p>
+          <p>Sending a Monero payment enables secure contact via Session messenger for deal negotiations. Options include purchasing ad placements (such as video watermarks) or requesting custom-made gameplay footage tailored to specific brands (including sexual content). All pricing, terms, and deliverables are discussed privately over Session.</p>
+          <p>The Monero transfer serves as a contact fee that guarantees CYBERLEEK will respond to initiate the conversation.</p>
+          <button class="btn" style="width: 100%; margin-top: 10px;" id="btn-monero-contact">Generate Contact Details</button>
+        </div>
+        
+        <div id="monero-loading" style="display: none; text-align: center; padding: 2rem; color: var(--text-dim);">
+          <div class="spinner" style="border: 3px solid var(--border); border-top: 3px solid var(--green); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+          <div>Generating your unique Session account... (Takes ~15 seconds)</div>
+        </div>
+
+        <div id="monero-content" style="display: none; margin-top: 15px;">
+          <div class="info-box" style="border-color: var(--amber-dim); background: rgba(255,204,0,0.04); color: var(--amber);">
+            <div class="label" style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">1. Save Your Recovery Password</div>
+            <p style="font-size: 0.9em; color: var(--text-dim);">This is your Session account. If you lose these words, you lose the account and it's impossible for CYBERLEEK to contact you. Write them down.</p>
+            <div style="border: 1px solid var(--amber-dim); padding: 10px; background: #00050d; margin: 10px 0; font-family: monospace; color: var(--amber); user-select: all; word-break: break-all;" id="mnemonic">Loading...</div>
+            <div style="margin-top:1.5rem;">
+              <h3 style="margin: 0 0 0.5rem 0; font-size: 1rem; color: var(--text-bright);">Log into Session</h3>
+              <p>Download <a href="https://getsession.org/download" target="_blank" style="color: var(--neon);">Session</a>. Open it, tap "I have an account", and paste the words above.</p>
+            </div>
+          </div>
+          <div class="info-box">
+            <div class="label" style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">2. Send Donation</div>
+            <p style="font-size: 0.9em; color: var(--text-dim);">The numbers after the decimal point are your unique ID. Don't round them. The number before the decimal is the donation fee.</p>
+            <div style="margin: 10px 0;">
+              <div class="info-label">Amount (XMR)</div>
+              <div style="border: 1px solid var(--green); padding: 10px; text-align: center; background: #00050d; color: var(--green); font-weight: bold; font-family: monospace;" id="xmr-amount"></div>
+            </div>
+            <div style="margin: 10px 0;">
+              <div class="info-label">Address</div>
+              <div style="border: 1px solid var(--border); padding: 10px; background: #00050d; color: var(--neon); font-family: monospace; font-size: 0.85em; word-break: break-all; user-select: all;" id="xmr-address"></div>
+            </div>
+            <p style="color: var(--red); font-weight: bold;">⚠️ CRITICAL: DO NOT send directly from a cryptocurrency exchange (KuCoin, Kraken, etc.). Exchanges change the exact decimal amounts of your withdrawal. If the 12 digits after the decimal point are altered, CYBERLEEK literally cannot derive your Session ID. You will not be contacted. You MUST send from a personal wallet.</p>
+          </div>
+          <div class="info-box">
+            <div class="label" style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">3. Wait</div>
+            <p>Once you've sent the XMR from your personal wallet, wait up to 24 hours. CYBERLEEK will detect the payment, derive your Session ID, and message you. When CYBERLEEK messages you on Session, it is 100% authentic. No one else knows your Session ID. Do not share it with anyone.</p>
+          </div>
+          <details style="background: #00102b; border: 1px solid var(--border); padding: 1rem; margin-top: 1rem;">
+            <summary style="cursor: pointer; font-weight: bold; color: var(--neon);">Need Monero? How to buy and send.</summary>
+            <div style="margin-top:1rem; font-size:0.9rem; color: var(--text-dim);">
+              <p><strong>1. Buy XMR</strong><br>Get it on KuCoin, MEXC, HTX, Kraken, Poloniex, or Nonkyc.io.</p>
+              <p><strong>2. Get a Wallet</strong><br>Download <a href="https://cakewallet.com/" target="_blank" style="color: var(--neon);">Cake Wallet</a> (Mobile) or <a href="https://featherwallet.org/" target="_blank" style="color: var(--neon);">Feather Wallet</a> (Desktop).</p>
+              <p><strong>3. Withdraw</strong><br>Send the XMR from the exchange to your new wallet. Wait for it to arrive.</p>
+              <p><strong>4. Send Payment</strong><br>Send the exact amount shown above to the address shown above. Make sure your wallet sends 12 decimal places.</p>
+            </div>
+          </details>
+          <div class="info-box" style="font-size: 0.85rem; color: var(--text-dark); margin-top: 1rem;">
+            <p><strong>Rules:</strong></p>
+            <ul>
+              <li>You can advertise almost anything. Gambling and adult content are fine. No scams.</li>
+              <li>This payment only guarantees CYBERLEEK contacts you. Deal terms are worked out in chat.</li>
+            </ul>
+            <br>
+            <p><strong>How does this actually work?</strong></p>
+            <p>When you click the button above, this page does some heavy math to generate a brand new, unique 12-digit ID. That ID is mathematically tied to a brand new Session account. </p>
+            <p>Because Monero hides transaction amounts on the blockchain, no one else in the world can see the 12 digits you sent. Only CYBERLEEK can decrypt the amount, reverse the math to find your Session ID, and message you.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sec-drop" id="sec-faq">
+      <div class="sec-head">◈ FAQ</div>
+      <div class="sec-body" id="faq-content"></div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+  <section class="card" id="card-token">
+      <div class="ca-bar">
+        <span class="ca-label">CA:</span>
+        <span id="ca-addr">ApZuxdpzMrbEYTGEzeY9afh5pj9d6qPRJCTgQYiipbKg</span>
+        <button class="btn" id="ca-copy">COPY</button>
+      </div>
+      <div class="card-head" onclick="toggleCard('token')"><div class="dot"></div> TOKEN INFO <span class="toggle">▼</span></div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item"><div class="info-label">Total Supply</div><div class="info-value neon">1B</div></div>
+          <div class="info-item">
+            <div class="info-label">Security</div>
+            <div class="info-value positive" style="font-size: 0.85em; line-height: 1.5;">LP Burned ✓<br>Mint Revoked ✓<br>Freeze Revoked ✓</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Taxes</div>
+            <div class="info-value positive" style="font-size: 0.9em;">Buy: 0%<br>Sell: 0%</div>
+          </div>
+        </div>
+      </div>
+    </section><section class="card" id="card-trade">
+      <div class="card-head" onclick="toggleCard('trade')"><div class="dot"></div> TRADE <span class="toggle">▼</span></div>
+      <div class="card-body"><div class="trade-grid" id="links"><a href="https://raydium.io/swap/?outputCurrency=ApZuxdpzMrbEYTGEzeY9afh5pj9d6qPRJCTgQYiipbKg" target="_blank" rel="noopener">Raydium</a><a href="https://dexscreener.com/solana/ApZuxdpzMrbEYTGEzeY9afh5pj9d6qPRJCTgQYiipbKg" target="_blank" rel="noopener">DexScreener</a><a href="https://birdeye.so/solana/token/ApZuxdpzMrbEYTGEzeY9afh5pj9d6qPRJCTgQYiipbKg" target="_blank" rel="noopener">Birdeye</a><a href="https://www.defined.fi/token/sol/ApZuxdpzMrbEYTGEzeY9afh5pj9d6qPRJCTgQYiipbKg" target="_blank" rel="noopener">defined</a></div></div>
+    </section><section class="card" id="card-anns">
+      <div class="card-head" onclick="toggleCard('anns')"><div class="dot"></div> ANNOUNCEMENTS <span class="toggle">▼</span></div>
+      <div class="card-body" id="anns"><div class="ann-item">
+         <div class="ann-date">Oct 10, 2026, 06:54 AM</div>
+         <div class="ann-title">The Offer</div>
+         <div class="ann-body">Here's the deal, nice and clean. CYBERLEEK hits 30 million marketcap, the build goes out — full story mode, played to the end, credits and all. Don't believe it has full story mode? Ask for what you want to see, and it gets provided. Take-Two gets one way out: physical disks and a public apology. They can take it at any moment. Or they can gamble that CL is bluffing. Everyone knows which one they'll pick.</div>
+       </div><div class="ann-item">
+         <div class="ann-date">Oct 10, 2026, 05:01 AM</div>
+         <div class="ann-title">LUCIA LEEK — POLL AND MCAP LEVELS</div>
+         <div class="ann-body">Current leek: the live poll decides what gets released. Vote now. Every next leek: clothing is determined by marketcap only. 2M mcap = bikini. 3M mcap = topless. 4M mcap = fully naked. 6M mcap = 4K closeups, fully naked.</div>
+       </div></div>
+    </section><section class="card" id="card-content">
+      <div class="card-head" onclick="toggleCard('content')"><div class="dot"></div> LEEKS <span class="toggle">▼</span></div>
+      <div class="card-body"><div id="content"><div class="content-item">
+        <div class="content-title">GTA 6: An Extended Leek - zip password: cyberleek</div>
+        <div>
+          <a class="mirror-link " href="https://bedrive.ru/d022" target="_blank" rel="noopener">▸ bedrive.ru mirror 1</a><a class="mirror-link " href="https://temp.sh/HbzEm/video.zip" target="_blank" rel="noopener">▸ temp.sh mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: prologue 1</div>
+        <div>
+          <a class="mirror-link " href="https://lufi.ethibox.fr/r/TAT5VDwYN8#ZxWId7BfPTEwd5I3Np9hbbWAM+phnhh8e6RhWgfKcGs=" target="_blank" rel="noopener">▸ lufi.ethibox.fr mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: rideout customs</div>
+        <div>
+          <a class="mirror-link " href="https://upload.disroot.org/r/c3a58zRy#BKUKxv5S0m2PNqgDBbauCgyqZkfm1rbKEnDAcQIXzbw=" target="_blank" rel="noopener">▸ upload.disroot.org mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: game store</div>
+        <div>
+          <a class="mirror-link " href="https://bedrive.ru/006b" target="_blank" rel="noopener">▸ bedrive.ru mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: beach</div>
+        <div>
+          <a class="mirror-link " href="https://bedrive.ru/8ef2" target="_blank" rel="noopener">▸ bedrive.ru mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: nine1nine</div>
+        <div>
+          <a class="mirror-link " href="https://temp.sh/KRkCo/nine1nine.mp4" target="_blank" rel="noopener">▸ temp.sh mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: nudist town (STRONG NUDITY)</div>
+        <div>
+          <a class="mirror-link " href="https://www.upload.ee/files/19685052/nudist_town.mp4.html" target="_blank" rel="noopener">▸ upload.ee mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: plane (NIGHT)</div>
+        <div>
+          <a class="mirror-link " href="https://www.upload.ee/files/19681203/plane2.mp4.html" target="_blank" rel="noopener">▸ upload.ee mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: gas</div>
+        <div>
+          <a class="mirror-link " href="https://temp.sh/julnh/gas.mp4" target="_blank" rel="noopener">▸ temp.sh mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: strip club</div>
+        <div>
+          <a class="mirror-link " href="https://bedrive.ru/43f0" target="_blank" rel="noopener">▸ bedrive.ru mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: hypercar part 2</div>
+        <div>
+          <a class="mirror-link " href="https://temp.sh/QVwth/hypercar2.mp4" target="_blank" rel="noopener">▸ temp.sh mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: hypercar part 2</div>
+        <div>
+          <a class="mirror-link " href="https://temp.sh/QVwth/hypercar2.mp4" target="_blank" rel="noopener">▸ temp.sh mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: hypercar part 1</div>
+        <div>
+          <a class="mirror-link " href="https://bedrive.ru/32f5" target="_blank" rel="noopener">▸ bedrive.ru mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: plane video (POLL)</div>
+        <div>
+          <a class="mirror-link " href="https://www.upload.ee/files/19668811/plane.mp4.html" target="_blank" rel="noopener">▸ upload.ee mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: junkies video</div>
+        <div>
+          <a class="mirror-link " href="https://transfiles.ru/vimdx" target="_blank" rel="noopener">▸ transfiles.ru mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: taser video</div>
+        <div>
+          <a class="mirror-link " href="https://gofile.io/d/qW134pdk" target="_blank" rel="noopener">▸ gofile.io mirror 1</a><a class="mirror-link " href="https://bedrive.ru/ead5" target="_blank" rel="noopener">▸ bedrive.ru mirror 1</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: random video 1</div>
+        <div>
+          <a class="mirror-link " href="https://transfiles.ru/ybyf9" target="_blank" rel="noopener">▸ transfiles.ru mirror 1</a><a class="mirror-link " href="https://www.upload.ee/files/19662951/video2.mp4.html" target="_blank" rel="noopener">▸ upload.ee mirror 1</a><a class="mirror-link " href="https://vilenarios.com/hhOoYZtHBqQi3d-dmxcGooXKTbiT3HJ2-eNsE7HNtKg" target="_blank" rel="noopener">▸ arweave mirror 1</a><a class="mirror-link " href="https://turbo-gateway.com/hhOoYZtHBqQi3d-dmxcGooXKTbiT3HJ2-eNsE7HNtKg" target="_blank" rel="noopener">▸ arweave mirror 2</a><a class="mirror-link " href="https://arweave.net/hhOoYZtHBqQi3d-dmxcGooXKTbiT3HJ2-eNsE7HNtKg" target="_blank" rel="noopener">▸ arweave mirror 3</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: full map</div>
+        <div>
+          <a class="mirror-link " href="https://www.upload.ee/files/19662855/full_map.png.html" target="_blank" rel="noopener">▸ upload.ee mirror 1</a><a class="mirror-link " href="https://vilenarios.com/GVTWJUbg27XLsFEMctFUL45Z3beIyDWfKuhTe3Sp_w0" target="_blank" rel="noopener">▸ arweave mirror 1</a><a class="mirror-link " href="https://turbo-gateway.com/GVTWJUbg27XLsFEMctFUL45Z3beIyDWfKuhTe3Sp_w0" target="_blank" rel="noopener">▸ arweave mirror 2</a><a class="mirror-link " href="https://arweave.net/GVTWJUbg27XLsFEMctFUL45Z3beIyDWfKuhTe3Sp_w0" target="_blank" rel="noopener">▸ arweave mirror 3</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: basketball video</div>
+        <div>
+          <a class="mirror-link " href="https://www.upload.ee/files/19658673/output.mp4.html" target="_blank" rel="noopener">▸ upload.ee mirror 1</a><a class="mirror-link " href="https://vilenarios.com/3XQv_9ndgQ48DAZTeEYqRdVFryunBb0tI4gEVQpTJUs" target="_blank" rel="noopener">▸ arweave mirror 1</a><a class="mirror-link " href="https://turbo-gateway.com/3XQv_9ndgQ48DAZTeEYqRdVFryunBb0tI4gEVQpTJUs" target="_blank" rel="noopener">▸ arweave mirror 2</a><a class="mirror-link " href="https://arweave.net/3XQv_9ndgQ48DAZTeEYqRdVFryunBb0tI4gEVQpTJUs" target="_blank" rel="noopener">▸ arweave mirror 3</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: map sneak peek 2</div>
+        <div>
+          <a class="mirror-link " href="https://vilenarios.com/zbfExgTitr6LZ9Cu8lv3P8hjDr56uYyEIVkYU1OdZ-0" target="_blank" rel="noopener">▸ arweave mirror 1</a><a class="mirror-link " href="https://turbo-gateway.com/zbfExgTitr6LZ9Cu8lv3P8hjDr56uYyEIVkYU1OdZ-0" target="_blank" rel="noopener">▸ arweave mirror 2</a><a class="mirror-link " href="https://arweave.net/zbfExgTitr6LZ9Cu8lv3P8hjDr56uYyEIVkYU1OdZ-0" target="_blank" rel="noopener">▸ arweave mirror 3</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: map sneak peek 1</div>
+        <div>
+          <a class="mirror-link " href="https://ar.io/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener">▸ arweave mirror 1</a><a class="mirror-link " href="https://vilenarios.com/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener">▸ arweave mirror 2</a><a class="mirror-link " href="https://turbo-gateway.com/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener">▸ arweave mirror 3</a><a class="mirror-link " href="https://arweave.net/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener">▸ arweave mirror 4</a>
+        </div>
+      </div><div class="content-item">
+        <div class="content-title">GTA 6: map sneak peek 1</div>
+        <div>
+          <a class="mirror-link " href="https://ar.io/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener">▸ arweave mirror 1</a><a class="mirror-link " href="https://vilenarios.com/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener">▸ arweave mirror 2</a><a class="mirror-link " href="https://turbo-gateway.com/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener">▸ arweave mirror 3</a><a class="mirror-link " href="https://arweave.net/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener">▸ arweave mirror 4</a>
+        </div>
+      </div></div></div>
+    </section><section class="card" id="card-poll">
+      <div class="card-head" onclick="toggleCard('poll')"><div class="dot"></div> POLL <span class="toggle">▼</span></div>
+      <div class="card-body" id="poll"><div class="poll-badge live">▸ LIVE</div><div class="poll-title">Next GTA 6 Leek?</div><div class="poll-meta">ends Oct 11, 2026, 04:03 AM · <span id="countdown">0d 18h 50m 56s</span> · 25385.630627846 $CYBERLEEK donated · <span class="leading">▸ FREEROAM LUCIA (THIRD PERSON) leading</span></div><div class="choice-row "><div class="choice-top"><span class="choice-name ">FREEROAM JASON (FIRST PERSON)</span><span class="choice-stats">6410.524647398 <span class="pct">25.3%</span></span></div><div class="bar-track"><div class="bar-fill " style="width:25.25%"></div></div><div class="choice-footer"><span class="choice-addr"><span class="label">send $CYBERLEEK to →</span> <span class="addr">82td9UbfJdLFTHaQycANgWe3KDPfVRJmMpE65VASi8o4</span></span><button class="copy-btn" onclick="window._copy('82td9UbfJdLFTHaQycANgWe3KDPfVRJmMpE65VASi8o4', this)">COPY</button></div></div><div class="choice-row winning"><div class="choice-top"><span class="choice-name winner">▸ FREEROAM LUCIA (THIRD PERSON)</span><span class="choice-stats">15836.415980448 <span class="pct">62.4%</span></span></div><div class="bar-track"><div class="bar-fill winner" style="width:62.38%"></div></div><div class="choice-footer"><span class="choice-addr"><span class="label">send $CYBERLEEK to →</span> <span class="addr">urTU9Fs9eYHaYvcomnCoyYZEHeVqW3GaUruz9AJEGQ8</span></span><button class="copy-btn" onclick="window._copy('urTU9Fs9eYHaYvcomnCoyYZEHeVqW3GaUruz9AJEGQ8', this)">COPY</button></div></div><div class="choice-row "><div class="choice-top"><span class="choice-name ">SIDE MISSION JASON NAKED</span><span class="choice-stats">69 <span class="pct">0.3%</span></span></div><div class="bar-track"><div class="bar-fill " style="width:0.5%"></div></div><div class="choice-footer"><span class="choice-addr"><span class="label">send $CYBERLEEK to →</span> <span class="addr">FJKLhLhSTqoB27yHgib4iND4gSVyrJwn5Tje7498Pwwg</span></span><button class="copy-btn" onclick="window._copy('FJKLhLhSTqoB27yHgib4iND4gSVyrJwn5Tje7498Pwwg', this)">COPY</button></div></div><div class="choice-row "><div class="choice-top"><span class="choice-name ">SIDE MISSION LUCIA</span><span class="choice-stats">3069.69 <span class="pct">12.1%</span></span></div><div class="bar-track"><div class="bar-fill " style="width:12.09%"></div></div><div class="choice-footer"><span class="choice-addr"><span class="label">send $CYBERLEEK to →</span> <span class="addr">HToauFmbMJHeNPB3m5exp2pWkxhsM6JaVnanuRS1JuFA</span></span><button class="copy-btn" onclick="window._copy('HToauFmbMJHeNPB3m5exp2pWkxhsM6JaVnanuRS1JuFA', this)">COPY</button></div></div><div class="info-box"><strong>▸ HOW VOTING WORKS</strong><ul><li>Send $CYBERLEEK to the address of the choice you want to vote for.</li><li>Only $CYBERLEEK is accepted. Sending SOL or other tokens will result in loss of funds.</li><li>Donations are final and go directly to funding the CYBERLEEK project.</li><li>The winning choice will be featured in the "Content" section within 24h after the poll ends.</li></ul></div></div>
+    </section></div>
+  <footer class="footer">PUBLISHERS' FAVORITE VEGETABLE</footer>
+  <script>
+    function toggleSec(id) {
+      const el = document.getElementById('sec-' + id);
+      const btn = document.getElementById('btn-' + id);
+      document.querySelectorAll('.sec-drop').forEach(s => s.id !== 'sec-' + id && s.classList.remove('visible'));
+      document.querySelectorAll('.topbar-btn').forEach(b => b.id !== 'btn-' + id && b.classList.remove('active'));
+      
+      const wrapper = document.querySelector('.wrapper');
+      if (el.classList.contains('visible')) {
+        el.classList.remove('visible');
+        if (btn) btn.classList.remove('active');
+        document.getElementById('btn-main').classList.add('active');
+        wrapper.classList.remove('cards-hidden');
+      } else {
+        el.classList.add('visible');
+        if (btn) btn.classList.add('active');
+        wrapper.classList.add('cards-hidden');
+      }
+    }
+    document.getElementById('btn-about').onclick = () => toggleSec('about');
+    document.getElementById('btn-contact').onclick = () => toggleSec('contact');
+    document.getElementById('btn-faq').onclick = () => toggleSec('faq');
+    document.getElementById('btn-main').onclick = () => {
+    document.querySelectorAll('.sec-drop').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.topbar-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-main').classList.add('active');
+    document.querySelector('.wrapper').classList.remove('cards-hidden');
+    };
+    function toggleCard(id) { 
+      const el = document.getElementById('card-' + id); 
+      if (el) el.classList.toggle('collapsed'); 
+    }
+  </script>
+
+</body></html>
