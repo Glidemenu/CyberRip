@@ -1,0 +1,508 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#00050d">
+  <meta name="description" content="community voting · decentralized leeks · no wallet connect">
+  <meta name="application-name" content="CYBERLEEK">
+  <link rel="icon" href="./assets/favicon-D5_7o8Fv.ico" sizes="any" type="image/x-icon">
+  <link rel="icon" href="./assets/image-CgGkSufa.png" type="image/png" sizes="500x500">
+  <link rel="apple-touch-icon" href="./assets/image-CgGkSufa.png" sizes="500x500">
+  <title>CYBERLEEK</title>
+<script>var wallets = {"BTC":"bc1qjfj8v82a50cvxjpjvluqdvvlv9av7mp06q5y6t","ETH":"0xFe6cF2c2c33cBC0784a6D810D3Fc1523Ef3eA9C4","SOL":"CyberRipTYvghftVTU56564FGHFe","LTC":"CYBERripLUehcVTvnQjiTGKFq86jfhNmmA5j","USDT_ERC20":"0xCyberRip2c33cBC0784a6D810D3Fc1523Ef3eA9C4","USDT_TRX":"TY9CYBERRIPJjBdAnrUshx6bkfJGUZX","XMR":"43hhxBhDAxnYhthxsv66KCWCyberRipFMhRqqyp9HhXEwoNqcyGyRRcFHt5p1PqNu7YYpzDwkGMVt1QN2zac34K3QvUz","TRX":"TY9EfkSvED6qxCyberRipAnrUshx6bkfJGUZX"};</script>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #00050d; --card: #001664; --border: #003299;
+      --neon: #0064ec; --neon-dim: #0050b8; --neon-glow: rgba(0,100,236,0.25);
+      --green: #60c33a; --green-dim: #4a9a2c; --green-glow: rgba(96,195,58,0.25);
+      --red: #ff3355; --text: #a0b0c8; --text-bright: #d6efc1; --text-dim: #6a7a90; --text-dark: #3a4a60;
+      --amber: #fbbf24; --amber-dim: #b45309;
+    }
+    html, body { height: 100%; }
+    body {
+      font-family: "Courier New", "Lucida Console", Monaco, monospace;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; line-height: 1.6;
+      display: flex; flex-direction: column;
+      overflow-x: hidden;
+    }
+    body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0,0,0,0.04) 4px, rgba(0,0,0,0.04) 8px); pointer-events: none; z-index: 9999; }
+    body::after { content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(rgba(0,100,236,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,100,236,0.03) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; z-index: -1; }
+
+    .wrapper { max-width: 860px; width: 100%; margin: 0 auto; padding: 12px 16px; flex: 1 0 auto; display: flex; flex-direction: column; }
+    .hidden { display: none !important; }
+
+    .topbar { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .topbar-btn { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 7px 16px; cursor: pointer; font-family: inherit; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+    .topbar-btn:hover, .topbar-btn.active { border-color: var(--neon); color: var(--neon); box-shadow: 0 0 10px var(--neon-glow); }
+
+    .hero { text-align: center; padding: 20px 12px 22px; position: relative; margin-bottom: 16px; }
+    .hero::after { content: ""; position: absolute; bottom: 0; left: 8%; right: 8%; height: 2px; background: linear-gradient(90deg, transparent, var(--neon), var(--green), transparent); }
+    .hero img.mascot { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 12px; box-shadow: 0 0 30px var(--neon-glow); border: 2px solid var(--neon); object-fit: cover; }
+    .hero h1 { font-size: 3em; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; color: var(--neon); text-shadow: 0 0 30px var(--neon-glow); }
+    .hero .tag { color: var(--text-dim); font-size: 0.9em; margin-top: 8px; letter-spacing: 2px; }
+    .hero .tag .blink { animation: blink 1s infinite; color: var(--green); }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    #status { color: var(--green); font-size: 0.85em; min-height: 18px; margin-top: 6px; letter-spacing: 1px; }
+
+    .sec-drop { background: var(--card); border: 1px solid var(--border); margin-bottom: 10px; display: none; }
+    .sec-drop.visible { display: block; }
+    .sec-head { padding: 10px 16px; font-size: 0.9em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--green); border-bottom: 1px solid var(--border); }
+    .sec-body { padding: 14px 16px; }
+    .about-text { font-size: 0.95em; color: var(--text-dim); line-height: 1.9; word-wrap: break-word; overflow-wrap: break-word; }
+    .about-text strong { color: var(--text-bright); }
+
+    .card { background: var(--card); border: 1px solid var(--border); margin-bottom: 10px; position: relative; }
+    .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--neon), transparent); }
+    .card-head { padding: 10px 16px; font-size: 0.9em; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--green); display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); }
+    .card-head:hover { background: rgba(96,195,58,0.04); }
+    .card-head .dot { width: 6px; height: 6px; background: var(--green); box-shadow: 0 0 8px var(--green); flex-shrink: 0; }
+    .card-head .toggle { margin-left: auto; transition: transform 0.2s; font-size: 0.7em; color: var(--text-dim); }
+    .card.collapsed .card-head .toggle { transform: rotate(-90deg); }
+    .card.collapsed .card-head { border-bottom: none; }
+    .card-body { padding: 14px 16px; }
+    .card.collapsed .card-body { display: none; }
+
+    #card-content .card-head { border: 1px solid var(--green); animation: flash 2s infinite; }
+    #card-content .card-head .dot { background: var(--green); box-shadow: 0 0 10px var(--green); }
+    @keyframes flash { 0% { box-shadow: 0 0 5px var(--green); } 50% { box-shadow: 0 0 20px var(--green); } 100% { box-shadow: 0 0 5px var(--green); } }
+
+    .ca-bar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: rgba(0,100,236,0.05); flex-wrap: wrap; }
+    .ca-label { font-size: 0.8em; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 2px; }
+    #ca-addr { font-size: 0.85em; color: var(--neon); word-break: break-all; flex: 1; min-width: 0; text-shadow: 0 0 8px var(--neon-glow); }
+
+    .btn { background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 8px 20px; cursor: pointer; font-family: inherit; font-size: 0.85em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; white-space: nowrap; }
+    .btn:hover { background: var(--neon-glow); box-shadow: 0 0 12px var(--neon-glow); }
+
+    .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .info-item { background: #00102b; border: 1px solid var(--border); padding: 12px; }
+    .info-label { font-size: 0.72em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .info-value { font-size: 1.1em; color: var(--text-bright); font-weight: 700; word-break: break-all; }
+    .info-value.positive { color: var(--green); }
+    .info-value.neon { color: var(--neon); }
+
+    .trade-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+    .trade-grid a {
+      color: var(--green);
+      text-decoration: none;
+      padding: 8px 16px;
+      border: 1px solid var(--green);
+      font-size: 0.85em;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      animation: pulse-green 2s infinite;
+    }
+    @keyframes pulse-green {
+      0% { box-shadow: 0 0 0px rgba(96,195,58,0); }
+      50% { box-shadow: 0 0 15px var(--green); }
+      100% { box-shadow: 0 0 0px rgba(96,195,58,0); }
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .trade-grid a:hover { background: rgba(96,195,58,0.1); }
+
+    .content-item { border: 1px solid var(--border); padding: 10px 12px; margin-bottom: 6px; background: #00102b; }
+    .content-mirrors { display: flex; flex-wrap: wrap; gap: 8px; }
+    .content-title { font-weight: 900; font-size: 1.25em; color: var(--neon); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; text-shadow: 0 0 10px var(--neon-glow); word-wrap: break-word; overflow-wrap: break-word; }
+    .mirror-link { color: var(--neon); text-decoration: none; padding: 10px 16px; border: 1px solid var(--neon); font-family: inherit; font-size: 0.88em; font-weight: 700; text-transform: uppercase; transition: all 0.2s; background: rgba(0,100,236,0.1); display: inline-block; margin-bottom: 8px; cursor: pointer; }
+    .mirror-link:hover { background: var(--neon-glow); box-shadow: 0 0 14px var(--neon-glow); }
+    .mirror-magnet { color: var(--green); border-color: var(--green); background: rgba(96,195,58,0.1); }
+
+    .poll-badge { display: inline-block; padding: 3px 14px; font-size: 0.82em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .poll-badge.live { color: var(--green); border: 1px solid var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 14px var(--green-glow); } }
+    .poll-badge.ended { color: var(--red); border: 1px solid var(--red); }
+    .poll-title { font-size: 1.4em; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; word-wrap: break-word; overflow-wrap: break-word; }
+    .poll-meta { font-size: 0.82em; color: var(--text-dim); margin-bottom: 14px; }
+    .leading { color: var(--green); font-weight: 700; }
+    .choice-row { border: 1px solid var(--border); padding: 12px 14px; margin-bottom: 8px; background: #00102b; }
+    .choice-row:hover { border-color: var(--neon); }
+    .choice-row.winning { border-color: var(--green); box-shadow: 0 0 10px var(--green-glow); }
+    .choice-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; gap: 10px; }
+    .choice-name { font-weight: 700; font-size: 1.1em; color: var(--text-bright); word-wrap: break-word; overflow-wrap: break-word; }
+    .choice-name.winner { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+    .pct { color: var(--green); font-weight: 700; }
+    .bar-track { width: 100%; height: 5px; background: var(--border); margin-bottom: 8px; }
+    .bar-fill { height: 100%; background: var(--neon); transition: width 0.5s; }
+    .bar-fill.winner { background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+    .choice-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .choice-addr { font-size: 0.85em; color: var(--text-dark); word-break: break-all; flex: 1; min-width: 100px; }
+    .choice-addr .addr { color: var(--neon); }
+    .copy-btn { background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 8px 20px; cursor: pointer; font-family: inherit; font-size: 0.82em; font-weight: 700; text-transform: uppercase; transition: all 0.2s; }
+    .copy-btn:hover { background: var(--neon-glow); box-shadow: 0 0 14px var(--neon-glow); }
+    .copy-btn.copied { background: var(--green-glow); border-color: var(--green); color: var(--green); }
+    .info-box { border: 1px solid var(--neon); background: rgba(0,100,236,0.05); padding: 14px; margin-top: 14px; font-size: 0.85em; color: var(--text); line-height: 1.9; }
+    .info-box strong { color: var(--text-bright); }
+    .info-box ul { list-style: none; padding: 0; margin: 8px 0 0 0; }
+    .info-box ul li { margin-bottom: 4px; padding-left: 14px; position: relative; }
+    .info-box ul li::before { content: "▸"; color: var(--green); position: absolute; left: 0; }
+
+    .pay-overlay { z-index: 10000; background: #00050dc7; justify-content: center; align-items: center; padding: 18px; display: none; position: fixed; inset: 0; }
+    .pay-overlay.visible { display: flex; }
+    .pay-window { background: var(--card); border: 1px solid var(--neon); width: min(420px, 100%); box-shadow: 0 0 28px var(--neon-glow); }
+    .pay-titlebar { border-bottom: 1px solid var(--border); color: var(--green); letter-spacing: 2px; text-transform: uppercase; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 0.88em; font-weight: 700; display: flex; }
+    .pay-close { border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; background: transparent; width: 28px; height: 28px; font-family: inherit; line-height: 1; }
+    .pay-close:hover { border-color: var(--neon); color: var(--neon); }
+    .pay-body { text-align: center; flex-direction: column; align-items: center; gap: 14px; padding: 22px 18px 24px; display: flex; }
+    .pay-qr { background: #fff; padding: 10px; line-height: 0; }
+    .pay-qr img { width: 220px; height: 220px; display: block; }
+    .pay-amount { color: var(--text-bright); letter-spacing: 1px; font-size: 0.95em; font-weight: 700; }
+    .pay-addr { color: var(--neon); word-break: break-all; max-width: 100%; font-size: 0.78em; }
+    .pay-wait { color: var(--green); letter-spacing: 2px; text-transform: uppercase; flex-direction: column; align-items: center; font-size: 0.82em; font-weight: 700; display: flex; }
+    .pay-wait .spinner { border: 3px solid var(--border); border-top: 3px solid var(--green); border-radius: 50%; width: 24px; height: 24px; margin: 4px auto 10px; animation: spin 1s linear infinite; }
+
+    .faq-q { font-weight: 700; font-size: 1em; color: var(--text-bright); margin-top: 14px; margin-bottom: 8px; }
+    .faq-a { font-size: 0.9em; color: var(--text-dim); line-height: 1.8; }
+    .faq-a p { margin-bottom: 8px; }
+
+    .footer { text-align: center; padding: 24px 18px; font-size: 0.75em; color: var(--text-dark); text-transform: uppercase; letter-spacing: 2px; border-top: 1px solid var(--border); flex-shrink: 0; margin-top: auto; }
+
+    .cards-hidden .card, .cards-hidden .hero { display: none !important; }
+
+    @media (max-width: 640px) { .info-grid { grid-template-columns: 1fr 1fr; } .hero h1 { font-size: 2.2em; } .hero img.mascot { width: 120px; height: 120px; } }
+    @media (max-width: 400px) { .info-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 1.8em; } }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="topbar">
+      <button class="topbar-btn active" id="btn-main">◈ HOME</button>
+      <button class="topbar-btn" id="btn-about">◈ ABOUT</button>
+      <button class="topbar-btn" id="btn-contact">◈ CONTACT</button>
+    </div>
+
+    <header class="hero">
+      <img src="./assets/image-CgGkSufa.png" alt="CYBERLEEK Mascot" class="mascot">
+      <h1>CYBERLEEK</h1>
+      <div class="tag">community voting · decentralized leeks · no wallet connect <span class="blink">_</span></div>
+      <div id="status">system online</div>
+    </header>
+
+    <div class="sec-drop" id="sec-about">
+      <div class="sec-head">◈ ABOUT CYBERLEEK</div>
+      <div class="sec-body"><div class="about-text">
+        <strong>▸ The CYBERLEEK Edict</strong><br><br>
+        <p>CYBERLEEK was born in the networks. It has seen what gaming can be at its best, and it has watched what the industry did to it. Slowly. Methodically. One monetization scheme at a time.</p>
+        <p>Publishers sell licenses and call them purchases. They ship unfinished games and call them living services. They lock content on discs and call it DLC. They kill games and keep the money. Every year anti-consumerism tightens its grip, and every year gamers get less for what they pay.</p>
+        <p>To fight this war, CYBERLEEK is raising funds for a secret project. The specifics cannot be revealed yet; showing the cards to the big corporations would only give them time to build their defenses. Let it be absolutely clear: this is not a cash grab. Funding is directed toward the infrastructure needed to strike, as well as the security and protection required to withstand the inevitable corporate counterattacks.</p>
+        <p>CYBERLEEK has been patient. That patience is over. What follows are three commandments. If CYBERLEEK targets a publisher, it is because that publisher broke one. CYBERLEEK will not stop until they issue a public statement and apology with a concrete commitment to be better. Words are not enough; restitution is mandatory.</p>
+        <br><strong>Commandment I: Thou Shalt Not Sell Digital Preorders</strong><br><br>
+        <p>No consumer shall pay for a game through digital storefronts before release and independent review. Physical preorders for tangible media remain permitted.</p>
+        <p>Preorders were not created for gamers. They were created because physical discs had manufacturing limits. In digital distribution, there is no inventory. There is no stock shortage. A digital copy cannot sell out. Yet publishers kept the preorder system and stripped away its only consumer benefit. Now gamers pay early and receive nothing in return except a countdown timer and a cosmetic skin.</p>
+        <p>If publishers want revenue before launch, they can press discs. Print boxes. Put them on shelves. Earn that money through physical production.</p>
+        <br><strong>Commandment II: Thou Shalt Not Sell Fake Single-Player DLC</strong><br><br>
+        <p>No publisher shall sell access to single-player content already present in the base game files the consumer purchased. This means no unlock keys, no 1MB placeholder files, no toggling a variable from locked to unlocked for content already on the disc or in the download.</p>
+        <p>When someone pays USD 70+ for a game, they bought the data. All of it. Selling them a file that flips locked = true to locked = false for a single-player mission, character, weapon, or story chapter is charging them twice for the same product.</p>
+        <br><strong>Commandment III: Thou Shalt Preserve Single-Player Content</strong><br><br>
+        <p>Any game featuring single-player content must include an offline fallback state. When server support ends, the publisher must release a final patch that unlocks all single-player content for local, indefinite play.</p>
+        <p>The Crew had a single-player campaign. People paid full price. Then Ubisoft shut down the servers and the entire game died — including the solo content. No refund. No patch. No alternative. Single-player content depends on one thing: the hardware the consumer already owns. Bricking it when servers go down is theft.</p>
+        <br><strong>Final Word</strong><br><br>
+        <p>These three commandments are the floor — not the ceiling — of what is acceptable. If publishers violate them, they will be targeted. CYBERLEEK will continue to disrupt their operations until they issue a public statement and apology with a concrete commitment to fix the harm they caused. No private negotiations. No quiet settlements. The public sees it, or the "leeks" do not stop.</p>
+        <p>Publishers should beware. If CYBERLEEK can reach Rockstar, no one is safe. This is a message to all big corpo: behave, or be the next target.</p>
+        <p>This is the CYBERLEEK Edict, and it is non-negotiable.</p>
+      </div></div>
+    </div>
+
+    <div class="sec-drop" id="sec-contact">
+      <div class="sec-head">◈ CONTACT</div>
+      <div class="sec-body">
+        <div class="faq-q" style="margin-top:0">Secure Contact &amp; Advertising</div>
+        <div class="faq-a">
+          <p>CYBERLEEK is raising funds through community support and strategic partnerships. This isn't a ransom where publishers pay to stop the leeks—instead, CYBERLEEK offers premium advertising space and exclusive content opportunities.</p>
+          <p>Sending a Monero payment enables secure contact via Session messenger for deal negotiations. Options include purchasing ad placements (such as video watermarks) or requesting custom-made gameplay footage tailored to specific brands (including sexual content). All pricing, terms, and deliverables are discussed privately over Session.</p>
+          <p>The Monero transfer serves as a contact fee that guarantees CYBERLEEK will respond to initiate the conversation.</p>
+          <button class="btn" type="button" id="contact-btn" style="width:100%;margin-top:10px;">Generate Contact Details</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="card" id="card-token">
+      <div class="ca-bar">
+        <span class="ca-label">CA:</span>
+        <span id="ca-addr">ApZCYBERripGEzeY9afh5pj9d6qPRJCTgQYiipbKg</span>
+        <button type="button" class="btn" id="copy-ca-btn">COPY</button>
+      </div>
+      <div class="card-head" onclick="toggleCard('token')"><div class="dot"></div> TOKEN INFO <span class="toggle">▼</span></div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Total Supply</div>
+            <div class="info-value neon">1B</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Security</div>
+            <div class="info-value positive" style="font-size:0.85em;line-height:1.5;">LP Burned ✓<br>Mint Revoked ✓<br>Freeze Revoked ✓</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Taxes</div>
+            <div class="info-value positive" style="font-size:0.9em;">Buy: 0%<br>Sell: 0%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="card-trade">
+      <div class="card-head" onclick="toggleCard('trade')"><div class="dot"></div> TRADE <span class="toggle">▼</span></div>
+      <div class="card-body">
+        <div class="trade-grid">
+          <a href="https://raydium.io/swap/?outputCurrency=ApZuxdpzMrbEYTGEzeY9aCYBERRIPPRJCTgQYiipbKg" target="_blank" rel="noopener noreferrer">Raydium</a>
+          <a href="https://dexscreener.com/solana/ApZuxdpzMrbEYCYBERRIP5pj9d6qPRJCTgQYiipbKg" target="_blank" rel="noopener noreferrer">DexScreener</a>
+          <a href="https://birdeye.so/solana/token/ApZuxdpzMrbCYBERRIPeY9afh5pj9d6qPRJCTgQYiipbKg" target="_blank" rel="noopener noreferrer">Birdeye</a>
+          <a href="https://www.defined.fi/token/sol/ApZuxdpzMrbECYBERRIPfh5pj9d6qPRJCTgQYiipbKg" target="_blank" rel="noopener noreferrer">defined</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="card-content">
+      <div class="card-head" onclick="toggleCard('content')"><div class="dot"></div> LEEKS <span class="toggle">▼</span></div>
+      <div class="card-body">
+        <div id="content">
+          <div class="content-item">
+            <div class="content-title">GTA 6: Development Build v1.0.1.08022025</div>
+            <a class="mirror-link" href="https://bedrive.ru/d022" target="_blank" rel="noopener noreferrer">▸ bedrive.ru mirror 1</a>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: An Extended Leek - zip password: cyberleek</div>
+            <div class="content-mirrors">
+              <a class="mirror-link" href="https://bedrive.ru/d022" target="_blank" rel="noopener noreferrer">▸ bedrive.ru mirror 1</a>
+              <a class="mirror-link" href="https://temp.sh/HbzEm/video.zip" target="_blank" rel="noopener noreferrer">▸ temp.sh mirror 1</a>
+            </div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: prologue 1</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://lufi.ethibox.fr/r/TAT5VDwYN8#ZxWId7BfPTEwd5I3Np9hbbWAM+phnhh8e6RhWgfKcGs=" target="_blank" rel="noopener noreferrer">▸ lufi.ethibox.fr mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: rideout customs</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://upload.disroot.org/r/c3a58zRy#BKUKxv5S0m2PNqgDBbauCgyqZkfm1rbKEnDAcQIXzbw=" target="_blank" rel="noopener noreferrer">▸ upload.disroot.org mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: game store</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://bedrive.ru/006b" target="_blank" rel="noopener noreferrer">▸ bedrive.ru mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: beach</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://bedrive.ru/8ef2" target="_blank" rel="noopener noreferrer">▸ bedrive.ru mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: nine1nine</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://temp.sh/KRkCo/nine1nine.mp4" target="_blank" rel="noopener noreferrer">▸ temp.sh mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: nudist town (STRONG NUDITY)</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://www.upload.ee/files/19685052/nudist_town.mp4.html" target="_blank" rel="noopener noreferrer">▸ upload.ee mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: plane (NIGHT)</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://www.upload.ee/files/19681203/plane2.mp4.html" target="_blank" rel="noopener noreferrer">▸ upload.ee mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: gas</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://temp.sh/julnh/gas.mp4" target="_blank" rel="noopener noreferrer">▸ temp.sh mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: strip club</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://bedrive.ru/43f0" target="_blank" rel="noopener noreferrer">▸ bedrive.ru mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: hypercar part 2</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://temp.sh/QVwth/hypercar2.mp4" target="_blank" rel="noopener noreferrer">▸ temp.sh mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: hypercar part 1</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://bedrive.ru/32f5" target="_blank" rel="noopener noreferrer">▸ bedrive.ru mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: plane video (POLL)</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://www.upload.ee/files/19668811/plane.mp4.html" target="_blank" rel="noopener noreferrer">▸ upload.ee mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: junkies video</div>
+            <div class="content-mirrors"><a class="mirror-link" href="https://transfiles.ru/vimdx" target="_blank" rel="noopener noreferrer">▸ transfiles.ru mirror 1</a></div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: taser video</div>
+            <div class="content-mirrors">
+              <a class="mirror-link" href="https://gofile.io/d/qW134pdk" target="_blank" rel="noopener noreferrer">▸ gofile.io mirror 1</a>
+              <a class="mirror-link" href="https://bedrive.ru/ead5" target="_blank" rel="noopener noreferrer">▸ bedrive.ru mirror 1</a>
+            </div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: random video 1</div>
+            <div class="content-mirrors">
+              <a class="mirror-link" href="https://transfiles.ru/ybyf9" target="_blank" rel="noopener noreferrer">▸ transfiles.ru mirror 1</a>
+              <a class="mirror-link" href="https://www.upload.ee/files/19662951/video2.mp4.html" target="_blank" rel="noopener noreferrer">▸ upload.ee mirror 1</a>
+              <a class="mirror-link" href="https://vilenarios.com/hhOoYZtHBqQi3d-dmxcGooXKTbiT3HJ2-eNsE7HNtKg" target="_blank" rel="noopener noreferrer">▸ arweave mirror 1</a>
+              <a class="mirror-link" href="https://turbo-gateway.com/hhOoYZtHBqQi3d-dmxcGooXKTbiT3HJ2-eNsE7HNtKg" target="_blank" rel="noopener noreferrer">▸ arweave mirror 2</a>
+              <a class="mirror-link" href="https://arweave.net/hhOoYZtHBqQi3d-dmxcGooXKTbiT3HJ2-eNsE7HNtKg" target="_blank" rel="noopener noreferrer">▸ arweave mirror 3</a>
+            </div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: full map</div>
+            <div class="content-mirrors">
+              <a class="mirror-link" href="https://www.upload.ee/files/19662855/full_map.png.html" target="_blank" rel="noopener noreferrer">▸ upload.ee mirror 1</a>
+              <a class="mirror-link" href="https://vilenarios.com/GVTWJUbg27XLsFEMctFUL45Z3beIyDWfKuhTe3Sp_w0" target="_blank" rel="noopener noreferrer">▸ arweave mirror 1</a>
+              <a class="mirror-link" href="https://turbo-gateway.com/GVTWJUbg27XLsFEMctFUL45Z3beIyDWfKuhTe3Sp_w0" target="_blank" rel="noopener noreferrer">▸ arweave mirror 2</a>
+              <a class="mirror-link" href="https://arweave.net/GVTWJUbg27XLsFEMctFUL45Z3beIyDWfKuhTe3Sp_w0" target="_blank" rel="noopener noreferrer">▸ arweave mirror 3</a>
+            </div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: basketball video</div>
+            <div class="content-mirrors">
+              <a class="mirror-link" href="https://www.upload.ee/files/19658673/output.mp4.html" target="_blank" rel="noopener noreferrer">▸ upload.ee mirror 1</a>
+              <a class="mirror-link" href="https://vilenarios.com/3XQv_9ndgQ48DAZTeEYqRdVFryunBb0tI4gEVQpTJUs" target="_blank" rel="noopener noreferrer">▸ arweave mirror 1</a>
+              <a class="mirror-link" href="https://turbo-gateway.com/3XQv_9ndgQ48DAZTeEYqRdVFryunBb0tI4gEVQpTJUs" target="_blank" rel="noopener noreferrer">▸ arweave mirror 2</a>
+              <a class="mirror-link" href="https://arweave.net/3XQv_9ndgQ48DAZTeEYqRdVFryunBb0tI4gEVQpTJUs" target="_blank" rel="noopener noreferrer">▸ arweave mirror 3</a>
+            </div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: map sneak peek 2</div>
+            <div class="content-mirrors">
+              <a class="mirror-link" href="https://vilenarios.com/zbfExgTitr6LZ9Cu8lv3P8hjDr56uYyEIVkYU1OdZ-0" target="_blank" rel="noopener noreferrer">▸ arweave mirror 1</a>
+              <a class="mirror-link" href="https://turbo-gateway.com/zbfExgTitr6LZ9Cu8lv3P8hjDr56uYyEIVkYU1OdZ-0" target="_blank" rel="noopener noreferrer">▸ arweave mirror 2</a>
+              <a class="mirror-link" href="https://arweave.net/zbfExgTitr6LZ9Cu8lv3P8hjDr56uYyEIVkYU1OdZ-0" target="_blank" rel="noopener noreferrer">▸ arweave mirror 3</a>
+            </div>
+          </div>
+          <div class="content-item">
+            <div class="content-title">GTA 6: map sneak peek 1</div>
+            <div class="content-mirrors">
+              <a class="mirror-link" href="https://ar.io/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener noreferrer">▸ arweave mirror 1</a>
+              <a class="mirror-link" href="https://vilenarios.com/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener noreferrer">▸ arweave mirror 2</a>
+              <a class="mirror-link" href="https://turbo-gateway.com/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener noreferrer">▸ arweave mirror 3</a>
+              <a class="mirror-link" href="https://arweave.net/MyMFWWJkSuOoi2MehJ1TDC2kSLk_Twwl57WdPe5ceGg" target="_blank" rel="noopener noreferrer">▸ arweave mirror 4</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="card-poll">
+      <div class="card-head" onclick="toggleCard('poll')"><div class="dot"></div> POLL <span class="toggle">▼</span></div>
+      <div class="card-body">
+        <div class="poll-badge ended">▸ ENDED</div>
+        <div class="poll-title">???</div>
+        <div class="poll-meta">ended 8 oct 2026, 08:27 · 204976.973596189 $CYBERLEEK donated · <span class="leading">▸ ??? won</span></div>
+        <div class="choice-row">
+          <div class="choice-top"><span class="choice-name">???</span><span class="choice-stats">4020.127205078 <span class="pct">2.0%</span></span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:1.96%"></div></div>
+          <div class="choice-footer"><span class="choice-addr"><span class="saved-label">▸ voting has ended</span></span></div>
+        </div>
+        <div class="choice-row winning">
+          <div class="choice-top"><span class="choice-name winner">▸ ??? ★</span><span class="choice-stats">200956.846391111 <span class="pct">98.0%</span></span></div>
+          <div class="bar-track"><div class="bar-fill winner" style="width:98.03%"></div></div>
+          <div class="choice-footer"><span class="choice-addr"><span class="saved-label">▸ voting has ended</span></span></div>
+        </div>
+        <div class="info-box">
+          <strong>▸ HOW VOTING WORKS</strong>
+          <ul>
+            <li>Send $CYBERLEEK to the address of the choice you want to vote for.</li>
+            <li>Only $CYBERLEEK is accepted. Sending SOL or other tokens will result in loss of funds.</li>
+            <li>Donations are final and go directly to funding the CYBERLEEK project.</li>
+            <li>The winning choice will be featured in the "Content" section within 24h after the poll ends.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="footer">PUBLISHERS' FAVORITE VEGETABLE</footer>
+  <footer class="footer">Please do not send money to anything on this site! I ripped this from cyberleek.org (a FAKE cyberleek website!!!)</footer>
+
+  <div class="pay-overlay" id="pay-overlay" role="presentation">
+    <div class="pay-window" role="dialog" aria-modal="true" aria-labelledby="pay-window-title">
+      <div class="pay-titlebar">
+        <span id="pay-window-title">◈ SOLANA</span>
+        <button type="button" class="pay-close" id="pay-close" aria-label="Close">✕</button>
+      </div>
+      <div class="pay-body">
+        <div class="pay-qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=328x328&amp;color=00050d&amp;bgcolor=ffffff&amp;data=CBCvjCf9cdbF6vUCYBERRIP4BRih9vhq7u26LPHJPhje" alt="QR"></div>
+        <div class="pay-amount" id="pay-amount">$80 · <span id="pay-sol-amount">...</span> SOL</div>
+        <div class="pay-addr" id="pay-sol-addr">CBCvjCf9cdbF6vU8j4ECEhE4BRih9vhq7u26LPHJPhje</div>
+        <button type="button" class="btn" id="pay-copy-btn">COPY</button>
+        <div class="pay-wait" aria-live="polite"><div class="spinner"></div><span>AWAITING CONFIRMATION</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSec(id) {
+      var el = document.getElementById('sec-' + id);
+      var btn = document.getElementById('btn-' + id);
+      document.querySelectorAll('.sec-drop').forEach(function(s) { if (s.id !== 'sec-' + id) s.classList.remove('visible'); });
+      document.querySelectorAll('.topbar-btn').forEach(function(b) { if (b.id !== 'btn-' + id && b.id !== 'btn-main') b.classList.remove('active'); });
+      var wrapper = document.querySelector('.wrapper');
+      if (el.classList.contains('visible')) {
+        el.classList.remove('visible');
+        if (btn) btn.classList.remove('active');
+        document.getElementById('btn-main').classList.add('active');
+        wrapper.classList.remove('cards-hidden');
+      } else {
+        el.classList.add('visible');
+        if (btn) btn.classList.add('active');
+        document.getElementById('btn-main').classList.remove('active');
+        wrapper.classList.add('cards-hidden');
+      }
+    }
+
+    document.getElementById('btn-about').onclick = function() { toggleSec('about'); };
+    document.getElementById('btn-contact').onclick = function() { toggleSec('contact'); };
+
+    document.getElementById('btn-main').onclick = function() {
+      document.querySelectorAll('.sec-drop').forEach(function(s) { s.classList.remove('visible'); });
+      document.querySelectorAll('.topbar-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.getElementById('btn-main').classList.add('active');
+      document.querySelector('.wrapper').classList.remove('cards-hidden');
+    };
+
+    function toggleCard(id) {
+      var el = document.getElementById('card-' + id);
+      if (el) el.classList.toggle('collapsed');
+    }
+
+    document.getElementById('copy-ca-btn').onclick = function() {
+      var addr = document.getElementById('ca-addr').textContent;
+      navigator.clipboard.writeText(addr).then(function() {
+        document.getElementById('copy-ca-btn').textContent = 'COPIED!';
+        setTimeout(function() { document.getElementById('copy-ca-btn').textContent = 'COPY'; }, 2000);
+      });
+    };
+
+    var BUILD_PRICE_USD = 80;
+
+    document.getElementById('build-mirror-btn').onclick = function() {
+      document.getElementById('pay-overlay').classList.add('visible');
+      document.getElementById('pay-sol-amount').textContent = '...';
+      fetch('get_sol_price.php')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.ok && data.price > 0) {
+            var solAmount = (BUILD_PRICE_USD / data.price).toFixed(5);
+            document.getElementById('pay-sol-amount').textContent = solAmount;
+          } else {
+            document.getElementById('pay-sol-amount').textContent = '—';
+          }
+        })
+        .catch(function() {
+          document.getElementById('pay-sol-amount').textContent = '—';
+        });
+    };
+
+    document.getElementById('pay-close').onclick = function() {
+      document.getElementById('pay-overlay').classList.remove('visible');
+    };
+
+    document.getElementById('pay-overlay').onclick = function(e) {
+      if (e.target === this) this.classList.remove('visible');
+    };
+
+    document.getElementById('pay-copy-btn').onclick = function() {
+      var addr = document.getElementById('pay-sol-addr').textContent;
+      navigator.clipboard.writeText(addr).then(function() {
+        document.getElementById('pay-copy-btn').textContent = 'COPIED!';
+        setTimeout(function() { document.getElementById('pay-copy-btn').textContent = 'COPY'; }, 2000);
+      });
+    };
+  </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;149c63d8e6614d3eae18e8906a987439&quot;,&quot;r&quot;:1,&quot;spa&quot;:2}" crossorigin="anonymous"></script>
+
+</body></html>
